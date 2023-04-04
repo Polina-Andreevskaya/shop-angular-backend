@@ -13,8 +13,6 @@ export async function getProductById(event) {
         } :
         {
             statusCode: 400,
-            body: JSON.stringify(
-                `Item ${id} not found`
-            ),
+            body: `Item ${id} not found`,
         };
 };
