@@ -1,7 +1,7 @@
 'use strict';
 const {productsList} = require('../mocks/products.mock');
 
-module.exports.getProductById = async (event) => {
+export async function getProductsById(event) {
     const id = event.pathParameters.id;
     const itemById = (await productsList).find((item) => item.id === +id);
 
@@ -17,4 +17,4 @@ module.exports.getProductById = async (event) => {
                 `Item ${id} not found`
             ),
         };
-};
+}
