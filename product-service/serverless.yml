@@ -28,6 +28,17 @@ provider:
   httpApi:
     cors: true
 
+
+plugins:
+  - serverless-webpack
+
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: false
+    packager: 'npm'
+
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
 #    role:
