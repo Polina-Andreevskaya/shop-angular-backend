@@ -1,17 +1,21 @@
 'use strict';
 const {productsList} = require('../mocks/products.mock');
 
-module.exports.getProducts = async (event) => {
-    return productsList ? {
-            statusCode: 200,
-            body: JSON.stringify(
-                productsList
-            ),
-        } :
-        {
-            statusCode: 400,
-            body: JSON.stringify(
-                'Products not found'
-            ),
+export async function getProducts(event) {
+    try {
+        await productsList
+    }
+    catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({message: `${error}`})
         };
-};
+    }
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify(
+            await productsList
+        ),
+    };
+}

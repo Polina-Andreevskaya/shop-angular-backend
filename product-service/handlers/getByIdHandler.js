@@ -3,7 +3,7 @@ const {productsList} = require('../mocks/products.mock');
 
 module.exports.getProductById = async (event) => {
     const id = event.pathParameters.id;
-    const itemById = productsList.find((item) => item.id === +id);
+    const itemById = (await productsList).find((item) => item.id === +id);
 
     return itemById ? {
             statusCode: 200,
@@ -14,7 +14,7 @@ module.exports.getProductById = async (event) => {
         {
             statusCode: 400,
             body: JSON.stringify(
-                'Item not found'
+                `Item ${id} not found`
             ),
         };
 };

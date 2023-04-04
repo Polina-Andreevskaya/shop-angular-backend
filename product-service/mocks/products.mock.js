@@ -1,4 +1,4 @@
-module.exports.productsList = [
+module.exports.productsList = new Promise((resolve) => resolve( [
     {
         title: 'Flat White',
         price: 6,
@@ -30,4 +30,4 @@ module.exports.productsList = [
         imgUrl: 'https://www.homegrounds.co/wp-content/uploads/2022/04/CI_WhatIsEspresso-Macchiato-1.jpg',
     },
 
-];
+]));
