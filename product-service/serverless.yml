@@ -30,6 +30,7 @@ provider:
 
 
 plugins:
+  - serverless-auto-swagger
   - serverless-webpack
 
 
@@ -38,6 +39,13 @@ custom:
     webpackConfig: 'webpack.config.js'
     includeModules: false
     packager: 'npm'
+  autoswagger:
+    title: 'string'
+    apiType: 'httpApi'
+    generateSwaggerOnDeploy: true
+    typefiles: [ ]
+    host: ''
+    schemes: [ 'https' ]
 
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
