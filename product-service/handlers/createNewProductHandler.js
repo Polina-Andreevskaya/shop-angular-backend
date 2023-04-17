@@ -14,29 +14,54 @@ const put = async (tableName, item) => {
 }
 
 export async function createNewProduct(event) {
-    let itemToCreate = event.body?.item;
+    console.log(event);
 
-    try {
-        await put(process.env.TABLE_PPODUCTS, {
-            id: itemToCreate.id,
-            price: itemToCreate.price,
-            title: itemToCreate.title,
-            imgUrl: itemToCreate.imgUrl,
-            description: itemToCreate.description});
-        await put(process.env.TABLE_STOCKS, {
-            id: itemToCreate.id,
-            count: itemToCreate.count
-        });
+    const payloadData  = JSON.parse(event.body);
 
-    } catch (error) {
+    const props = ['title', 'description', 'price', 'imgUrl', 'count'];
+    const missedFromSchema = props.find(
+        prop => !payloadData.hasOwnProperty(prop)
+    );
+
+    if (!payloadData || missedFromSchema) {
         return {
-            statusCode: 500,
-            body: JSON.stringify({ message: `Internal server error: ${error}` })
+            statusCode: 400,
+            body: JSON.stringify(
+                { message: `The data is invalid` }
+            ),
+        };
+    } else {
+        const productId = uuidv4();
+
+        try {
+            await put(process.env.TABLE_PPODUCTS, {
+                id: productId,
+                price: payloadData.price,
+                title: payloadData.title,
+                imgUrl: payloadData.imgUrl,
+                description: payloadData.description});
+            await put(process.env.TABLE_STOCKS, {
+                id: productId,
+                count: payloadData.count
+            });
+
+            console.log(`Product with ID [ ${productId} ] has been added`);
+
+        } catch (error) {
+
+            console.log(`Internal server error: ${error}`);
+
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: `Internal server error: ${error}` })
+            };
+        }
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(
+                { message: `Product with ID [ ${productId} ] has been added` }
+            ),
         };
     }
-
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ message: `Item was added: ${itemToCreate}` }),
-    };
 }
