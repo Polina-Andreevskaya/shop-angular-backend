@@ -27,6 +27,11 @@ provider:
   region: us-east-1
   httpApi:
     cors: true
+  environment:
+    TABLE_PRODUCTS: products
+    TABLE_STOCKS: stocks
+  iam:
+    role: arn:aws:iam::348258215421:role/db_access
 
 
 plugins:
@@ -90,6 +95,12 @@ functions:
       - httpApi:
           path: /products/{id}
           method: get
+  createNewProduct:
+    handler: handlers/createNewProductHandler.createNewProduct
+    events:
+      - httpApi:
+          path: /products
+          method: post
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
