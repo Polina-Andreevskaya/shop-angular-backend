@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 const put = async (tableName, item) => {
-    const scanResult = await dynamoDB.scan({
+    const scanResult = await dynamoDB.put({
         TableName: tableName,
         Item: item
     }).promise();
@@ -14,11 +14,12 @@ const put = async (tableName, item) => {
 }
 
 export async function createNewProduct(event) {
-    console.log(event);
+    console.log('create request event', event);
 
     const payloadData  = JSON.parse(event.body);
+    const productId = uuidv4();
 
-    const props = ['title', 'description', 'price', 'imgUrl', 'count'];
+    const props = ['title', 'description', 'price', 'count'];
     const missedFromSchema = props.find(
         prop => !payloadData.hasOwnProperty(prop)
     );
@@ -31,10 +32,8 @@ export async function createNewProduct(event) {
             ),
         };
     } else {
-        const productId = uuidv4();
-
         try {
-            await put(process.env.TABLE_PPODUCTS, {
+            await put(process.env.TABLE_PRODUCTS, {
                 id: productId,
                 price: payloadData.price,
                 title: payloadData.title,
@@ -60,7 +59,7 @@ export async function createNewProduct(event) {
         return {
             statusCode: 200,
             body: JSON.stringify(
-                { message: `Product with ID [ ${productId} ] has been added` }
+                { message: `Product with ID [ ${productId} ] has been added`, productId: productId }
             ),
         };
     }
