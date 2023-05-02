@@ -1,0 +1,28 @@
+service: authorization-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+  environment:
+    PolinaAndreevskaya: ${env:PolinaAndreevskaya}
+
+plugins:
+  - serverless-webpack
+  - serverless-dotenv-plugin
+
+useDotenv: true
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: true
+    packager: 'npm'
+
+
+functions:
+  basicAuthorizer:
+    handler: handlers/basicAuthorizerHandler.basicAuthorizer
