@@ -30,9 +30,55 @@ provider:
   environment:
     TABLE_PRODUCTS: products
     TABLE_STOCKS: stocks
+    SQS_URL:
+      Ref: catalogItemsQueue
+    SNS_ARN:
+      Ref: createProductTopic
   iam:
-    role: arn:aws:iam::348258215421:role/db_access
+#    role: arn:aws:iam::348258215421:role/db_access
+    role:
+      name: lamdaaccess
+      statements:
+        - Effect: Allow
+          Action:
+            - 'dynamodb:Scan'
+            - 'dynamodb:Query'
+            - 'dynamodb:PutItem'
+          Resource:
+            - 'arn:aws:dynamodb:us-east-1:348258215421:table/products'
+            - 'arn:aws:dynamodb:us-east-1:348258215421:table/stocks'
+        - Effect: Allow
+          Action:
+            - 'sqs:SendMessage'
+            - 'sqs:ReceiveMessage'
+            - 'sqs:DeleteMessage'
+            - 'sqs:GetQueueAttributes'
+          Resource:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
+        - Effect: Allow
+          Action:
+            - 'sns:Publish'
+          Resource: '*'
 
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+    createProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: "createProductTopic"
+    cptSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: "andreevskaya.polina@gmail.com"
+        TopicArn:
+          Ref: createProductTopic
 
 plugins:
   - serverless-auto-swagger
@@ -42,7 +88,7 @@ plugins:
 custom:
   webpack:
     webpackConfig: 'webpack.config.js'
-    includeModules: false
+    includeModules: true
     packager: 'npm'
   autoswagger:
     title: 'string'
@@ -101,6 +147,15 @@ functions:
       - httpApi:
           path: /products
           method: post
+  catalogBatchProcess:
+    handler: handlers/catalogBatchProcessHandler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

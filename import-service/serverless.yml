@@ -22,6 +22,13 @@ provider:
       Action: s3:*
       Resource:
         - 'arn:aws:s3:::imports-bucket/*'
+    - Effect: 'Allow'
+      Action:
+          - 'sqs:SendMessage'
+          - 'sqs:ReceiveMessage'
+          - 'sqs:DeleteMessage'
+          - 'sqs:GetQueueAttributes'
+      Resource: 'arn:aws:sqs:us-east-1:348258215421:catalogItemsQueue'
 
 plugins:
   - serverless-webpack

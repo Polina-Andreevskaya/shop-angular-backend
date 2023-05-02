@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.21.5",
+    "aws-sdk": "^2.1368.0",
+    "babel-loader": "^9.1.2",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "webpack": "^5.81.0",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "devDependencies": {
+    "serverless-webpack": "^5.11.0",
+    "webpack-cli": "^5.0.2"
+  }
+}
